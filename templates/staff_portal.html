@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome, {{ user }}</h1>
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+
+        <div class="tabs">
+            <button class="tab-link active" onclick="showTab(event, 'profile')">Profile</button>
+            <button class="tab-link" onclick="showTab(event, 'reader')">Readers</button>
+            <button class="tab-link" onclick="showTab(event, 'staff')">Staff</button>
+            <button class="tab-link" onclick="showTab(event, 'order')">Orders</button>
+            <button class="tab-link" onclick="showTab(event, 'books')">Books</button>
+            <button class="tab-link" onclick="showTab(event, 'book_inventory')">Book Inventory</button>
+        </div>
+
+        <div id="profile" class="tab-content active">
+            <h2>Profile Details</h2>
+            <p>Name: {{ profile.name }}</p>
+            <p>Post: {{ profile.post }}</p>
+        </div>
+
+        <div id="reader" class="tab-content">
+            <h2>Readers Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Address</th>
+                        <th>Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reader %}
+                    <tr>
+                        <td>{{ r.id }}</td>
+                        <td>{{ r.name }}</td>
+                        <td>{{ r.email }}</td>
+                        <td>{{ r.phone_no }}</td>
+                        <td>{{ r.address }}</td>
+                        <td>{{ r.password }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="staff" class="tab-content">
+            <h2>Staff Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Post</th>
+                        <th>Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in staff %}
+                    <tr>
+                        <td>{{ s.id }}</td>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.post }}</td>
+                        <td>{{ s.password }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="order" class="tab-content">
+            <h2>Orders</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User ID</th>
+                        <th>Book No</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in orders %}
+                    <tr>
+                        <td>{{ o.order_id }}</td>
+                        <td>{{ o.user_id }}</td>
+                        <td>{{ o.book_no }}</td>
+                        <td>{{ o.type }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button onclick="showForm('addOrderForm')">Add New Order</button>
+            <button onclick="showForm('updateOrderForm')">Update Order</button>
+            <div id="addOrderForm" class="form-popup hidden">
+                <h3>Add New Order</h3>
+                <form action="{{ url_for('add_order') }}" method="POST">
+                    <input type="number" name="user_id" placeholder="User ID" required>
+                    <input type="number" name="book_no" placeholder="Book No" required>
+                    <select name="type">
+                        <option value="purchase">Purchase</option>
+                        <option value="rent">Rent</option>
+                    </select>
+                    <button type="submit">Add Order</button>
+                    <button type="button" class="cancel-btn" onclick="closeForm('addOrderForm')">Cancel</button>
+                </form>
+            </div>
+            <div id="updateOrderForm" class="form-popup hidden">
+                <h3>Update Order</h3>
+                <form action="{{ url_for('update_order') }}" method="POST">
+                    <input type="number" name="order_id" placeholder="Order ID" required>
+                    <input type="number" name="user_id" placeholder="User ID">
+                    <input type="number" name="book_no" placeholder="Book No">
+                    <select name="type">
+                        <option value="purchase">Purchase</option>
+                        <option value="rent">Rent</option>
+                    </select>
+                    <button type="submit">Update Order</button>
+                    <button type="button" class="cancel-btn" onclick="closeForm('updateOrderForm')">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="books" class="tab-content">
+            <h2>Books</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Book No</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>ISBN</th>
+                        <th>Price</th>
+                        <th>Edition</th>
+                        <th>Category</th>
+                        <th>Publisher ID</th>
+                        <th>Year of Publication</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in books %}
+                    <tr>
+                        <td>{{ b.Book_No }}</td>
+                        <td>{{ b.Title }}</td>
+                        <td>{{ b.Author }}</td>
+                        <td>{{ b.ISBN }}</td>
+                        <td>{{ b.Price }}</td>
+                        <td>{{ b.Edition }}</td>
+                        <td>{{ b.Category }}</td>
+                        <td>{{ b.publisher_id }}</td>
+                        <td>{{ b.YOP }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button onclick="showForm('addBookForm')">Add New Book</button>
+            <button onclick="showForm('updateBookForm')">Update Book</button>
+
+            <div id="addBookForm" class="form-popup hidden">
+                <h3>Add New Book</h3>
+                <form action="{{ url_for('add_book') }}" method="POST">
+                    <input type="text" name="title" placeholder="Title" required>
+                    <input type="text" name="author" placeholder="Author" required>
+                    <input type="text" name="isbn" placeholder="ISBN">
+                    <input type="number" name="price" placeholder="Price">
+                    <input type="text" name="edition" placeholder="Edition">
+                    <input type="text" name="category" placeholder="Category">
+                    <input type="number" name="publisher_id" placeholder="Publisher ID">
+                    <input type="number" name="yop" placeholder="Year of Publication">
+                    <button type="submit">Add Book</button>
+                    <button type="button" class="cancel-btn" onclick="closeForm('addBookForm')">Cancel</button>
+                </form>
+            </div>
+
+            <div id="updateBookForm" class="form-popup hidden">
+                <h3>Update Book</h3>
+                <form action="{{ url_for('update_book') }}" method="POST">
+                    <input type="number" name="book_no" placeholder="Book No" required>
+                    <input type="text" name="title" placeholder="Title">
+                    <input type="text" name="author" placeholder="Author">
+                    <input type="text" name="isbn" placeholder="ISBN">
+                    <input type="number" name="price" placeholder="Price">
+                    <input type="text" name="edition" placeholder="Edition">
+                    <input type="text" name="category" placeholder="Category">
+                    <input type="number" name="publisher_id" placeholder="Publisher ID">
+                    <input type="number" name="yop" placeholder="Year of Publication">
+                    <button type="submit">Update Book</button>
+                    <button type="button" class="cancel-btn" onclick="closeForm('updateBookForm')">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="book_inventory" class="tab-content">
+            <h2>Book Inventory</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Book No</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inventory in book_inventory %}
+                    <tr>
+                        <td>{{ inventory.Book_No }}</td>
+                        <td>{{ inventory.Quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button onclick="showForm('addBookInventoryForm')">Add Inventory</button>
+            <button onclick="showForm('updateBookInventoryForm')">Update Inventory</button>
+            <div id="addBookInventoryForm" class="form-popup hidden">
+                <h3>Add Book Inventory</h3>
+                <form action="{{ url_for('add_book_inventory') }}" method="POST">
+                    <input type="number" name="book_no" placeholder="Book No" required>
+                    <input type="number" name="quantity" placeholder="Quantity" required>
+                    <button type="submit">Add Inventory</button>
+                    <button type="button" class="cancel-btn" onclick="closeForm('addBookInventoryForm')">Cancel</button>
+                </form>
+            </div>
+            <div id="updateBookInventoryForm" class="form-popup hidden">
+                <h3>Update Book Inventory</h3>
+                <form action="{{ url_for('update_book_inventory') }}" method="POST">
+                    <input type="number" name="book_no" placeholder="Book No" required>
+                    <input type="number" name="quantity" placeholder="Quantity" required>
+                    <button type="submit">Update Inventory</button>
+                    <button type="button" class="cancel-btn" onclick="closeForm('updateBookInventoryForm')">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(event, tabId) {
+            var tabContent = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+            }
+            var tabLinks = document.getElementsByClassName("tab-link");
+            for (var i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabId).style.display = "block";
+            event.currentTarget.className += " active";
+        }
+
+        function showForm(formId) {
+            document.getElementById(formId).classList.remove("hidden");
+        }
+
+        function closeForm(formId) {
+            document.getElementById(formId).classList.add("hidden");
+        }
+    </script>
+</body>
+
+</html>

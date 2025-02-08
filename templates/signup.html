@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+        }
+        input, select, button {
+            width: calc(100% - 24px);
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .link-button {
+            background-color: #008CBA;
+            text-decoration: none;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Signup</h2>
+        <form id="signupForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <label for="role">Role:</label>
+            <select id="role" name="role" required onchange="toggleRoleFields()">
+                <option value="" disabled selected>Select your role</option>
+                <option value="reader">Reader</option>
+                <option value="staff">Staff</option>
+            </select>
+            
+            <div id="readerFields" style="display: none;">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email">
+
+                <label for="phone_no">Phone Number:</label>
+                <input type="text" id="phone_no" name="phone_no">
+
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address">
+            </div>
+
+            <div id="staffFields" style="display: none;">
+                <label for="post">Post:</label>
+                <input type="text" id="post" name="post">
+            </div>
+
+            <button type="submit">Signup</button>
+        </form>
+        <a href="/login" class="link-button">Go to Login</a>
+    </div>
+    <script>
+        function toggleRoleFields() {
+            const role = document.getElementById('role').value;
+            document.getElementById('readerFields').style.display = role === 'reader' ? 'block' : 'none';
+            document.getElementById('staffFields').style.display = role === 'staff' ? 'block' : 'none';
+        }
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

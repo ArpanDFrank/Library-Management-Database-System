@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reader Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1, h2 {
+            color: #f5f5f5
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2c3e50;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+        }
+        .navbar h1 {
+            font-size: 1.5em;
+        }
+        .navbar .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .navbar .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tabs button {
+            background-color: #f4f4f4;
+            border: none;
+            padding: 15px;
+            flex: 1;
+            text-align: center;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .tabs button:hover {
+            background-color: #ddd;
+        }
+        .tabs button.active {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            align-items: center;
+            align-content: center;
+            text-align: center;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            align-items: center;
+            align-content: center;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            align-items: center;
+            align-content: left;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 500;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="navbar">
+            <h1>Reader Portal</h1>
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>            
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab-link active" onclick="showTab('profile')">Profile</button>
+            <button class="tab-link" onclick="showTab('borrowedBooks')">Borrowed Books</button>
+            <button class="tab-link" onclick="showTab('transactions')">Transactions</button>
+            <button class="tab-link" onclick="showTab('orders')">Orders</button>
+            <button class="tab-link" onclick="showTab('fines')">Fines</button>
+            <button class="tab-link" onclick="showTab('availableBooks')">Available Books</button>
+            <button class="tab-link" onclick="showTab('bookInventory')">Book Inventory</button>
+            <button class="tab-link" onclick="showTab('payments')">Payments</button>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile" class="tab-content active">
+            <div class="section-title">Profile Details</div>
+            <p><strong>Name:</strong> {{ profile.name }}</p>
+            <p><strong>Email:</strong> {{ profile.email }}</p>
+            <p><strong>Phone Number:</strong> {{ profile.phone_no }}</p>
+            <p><strong>Address:</strong> {{ profile.address }}</p>
+        </div>
+
+        <!-- Borrowed Books Section -->
+        <div id="borrowedBooks" class="tab-content">
+            <div class="section-title">Borrowed Books</div>
+            {% if borrowed_books %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in borrowed_books %}
+                            <tr>
+                                <td>{{ book.title }}</td>
+                                <td>{{ book.due_date }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No borrowed books.</p>
+            {% endif %}
+        </div>
+
+        <!-- Transaction History Section -->
+        <div id="transactions" class="tab-content">
+            <div class="section-title">Transaction History</div>
+            {% if transactions %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Issue Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                            {% if transactions.status is none %}
+                                {% set transactions.status = "No" %}
+                            {% endif %}
+                    
+                            <tr>
+                                <td>{{ transaction.book_title }}</td>
+                                <td>{{ transaction.issue_date }}</td>
+                                <td>{{ transaction.return_collect_date }}</td>
+                                <td>{{ transaction.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No transactions.</p>
+            {% endif %}
+        </div>
+
+        <!-- Orders Section -->
+        <div id="orders" class="tab-content">
+            <div class="section-title">Orders</div>
+            {% if orders %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Order Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.book_title }}</td>
+                                <td>{{ order.type }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No orders placed.</p>
+            {% endif %}
+        </div>
+
+        <!-- Fines Section -->
+        <div id="fines" class="tab-content">
+            <div class="section-title">Fines</div>
+            {% if fine_details %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Total Fine</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fine in fine_details %}
+                            <tr>
+                                <td>{{ fine.total_fine }}</td>
+                                <td>{{ fine.fine_status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No fines.</p>
+            {% endif %}
+        </div>
+
+        <!-- Available Books Section -->
+        <div id="availableBooks" class="tab-content">
+            <div class="section-title">Available Books</div>
+            {% if available_books %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book No</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Edition</th>
+                            <th>Publishers</th>
+                            <th>YOP</th>
+                            <th>Price</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in available_books %}
+                            <tr>
+                                <td>{{ book.Book_No }}</td>
+                                <td>{{ book.Title }}</td>
+                                <td>{{ book.Author }}</td>
+                                <td>{{ book.Category }}</td>
+                                <td>{{ book.Edition }}</td>
+                                <td>{{ book.Name }}</td>
+                                <td>{{ book.YOP }}</td>
+                                <td>{{ book.Price }}</td>
+
+
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No available books.</p>
+            {% endif %}
+        </div>
+
+        <!-- Book Inventory Section -->
+        <div id="bookInventory" class="tab-content">
+            <div class="section-title">Book Inventory</div>
+            {% if book_inventory %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book No</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inventory in book_inventory %}
+                            <tr>
+                                    <td>{{ inventory.Book_No }}</td>
+                                    <td>{{ inventory.Quantity }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No book inventory available.</p>
+            {% endif %}
+        </div>
+
+        <!-- Payments Section -->
+        <div id="payments" class="tab-content">
+            <div class="section-title">Payments</div>
+            {% if payments%}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Refund</th>
+                            <th>Fine</th>
+                            <th>Fine Status</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments%}
+                            <tr>
+                                <td>{{ payment.Transaction_id }}</td>
+                                <td>{{ payment.Payment_Date }}</td>
+                                <td>{{ payment.Payment_Success }}</td>
+                                <td>{{ payment.Refund }}</td>
+                                <td>{{ payment.fine_amount }}</td>
+                                <td>{{ payment.fine_status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No payment records.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tab content
+            let tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            let buttons = document.querySelectorAll('.tab-link');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show the selected tab
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to the clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
